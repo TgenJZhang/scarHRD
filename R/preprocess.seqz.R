@@ -7,7 +7,7 @@
 preprocess.seqz<-function(seg, ploidy0=NULL, chr.in.names=TRUE, outputdir=NULL, ploidylimit=0){
   if (is.null(ploidy0)){
     ploidy01 = seq(1, 5.5, 0.1)
-  } else if(ploidylimit=0 && !is.null(ploidy0)){ 
+  } else if(ploidylimit==0 && !is.null(ploidy0)){ 
     ploidy01=ploidy0
   } else {
     ploidy01= seq(ploidy0-ploidylimit,ploidy0+ploidylimit,0.1)
