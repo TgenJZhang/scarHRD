@@ -10,7 +10,7 @@
 #' @export
 #' @import sequenza
 #' @import data.table
-scar_score<-function(seg,reference = "grch38", chr.in.names=TRUE, m,seqz=FALSE, ploidy=NULL, sizelimitLOH=15e6, outputdir=NULL){
+scar_score<-function(seg,reference = "grch38", chr.in.names=TRUE, m,seqz=FALSE, ploidy=NULL, sizelimitLOH=15e6, outputdir=NULL, ploidylimit=0){
 
   if (is.null(outputdir)){
   outputdir=getwd()
@@ -39,7 +39,7 @@ scar_score<-function(seg,reference = "grch38", chr.in.names=TRUE, m,seqz=FALSE, 
 
   if (seqz==TRUE){
     cat('Preprocessing started...\n')
-    seg<-preprocess.seqz(seg, ploidy0=ploidy, chr.in.names=chr.in.names)
+    seg<-preprocess.seqz(seg, ploidy0=ploidy, chr.in.names=chr.in.names, outputdir=outputdir ploidylimit=0)
     cat('Preprocessing finished \n')
   } else {
     seg<-read.table(seg,header=T, check.names = F, stringsAsFactors = F, sep="\t")
@@ -55,7 +55,7 @@ scar_score<-function(seg,reference = "grch38", chr.in.names=TRUE, m,seqz=FALSE, 
   #Calculating the hrd score:
   res_hrd <- calc.hrd(seg,sizelimit1=sizelimitLOH)
   #Calculating the telomeric allelic imbalance score:
-  res_ai<- calc.ai_new(seg = seg, chrominfo = chrominfo) #<-- the first column is what I need
+  res_ai<- calc.ai_new(seg = seg, chrominfo = chrominfo, outputdir=outputdir) #<-- the first column is what I need
   #Calculating the large scale transition scores:
   res_lst <- calc.lst(seg = seg, chrominfo = chrominfo) #<-- You need to use the chrominfo.snp6 file! Nicolai sent it to you!
   sum_HRD0<-res_lst+res_hrd+res_ai[1]

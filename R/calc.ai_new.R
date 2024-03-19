@@ -6,7 +6,7 @@
 #' @param ploidyByChromosome option to determine ploidy per chromosome
 #' @param shrink shrink
 #' @return number of Allelic Imbalances
-calc.ai_new<-function(seg, chrominfo, min.size=1e6, cont = 0,ploidyByChromosome=TRUE, shrink=TRUE){
+calc.ai_new<-function(seg, chrominfo, min.size=1e6, cont = 0,ploidyByChromosome=TRUE, shrink=TRUE, outputdir=NULL){
   seg <- seg[seg[,4]- seg[,3] >= min.size,]
   seg <- seg[seg[,10] >= cont,]
   if(shrink){
@@ -76,6 +76,7 @@ calc.ai_new<-function(seg, chrominfo, min.size=1e6, cont = 0,ploidyByChromosome=
   no.events <- matrix(0, nrow=length(samples), ncol=12)
   rownames(no.events) <- samples
   colnames(no.events) <- c("Telomeric AI", "Mean size", "Interstitial AI", "Mean Size", "Whole chr AI", "Telomeric LOH",  "Mean size", "Interstitial LOH", "Mean Size", "Whole chr LOH", "Ploidy", "Aberrant cell fraction")
+  write.table(no.events, paste(outputdir,"/ai_intermediate1.txt"), sep="\t")
   for(j in samples){
     sample.seg <- seg[seg[,1] %in% j,]
     no.events[j,1] <- nrow(sample.seg[sample.seg[,'AI'] == 1,])
@@ -85,6 +86,7 @@ calc.ai_new<-function(seg, chrominfo, min.size=1e6, cont = 0,ploidyByChromosome=
     no.events[j,5] <- nrow(sample.seg[sample.seg[,'AI'] == 3,])
     no.events[j,11] <- ascat.ploidy[j]
     no.events[j,12] <- unique(sample.seg[,10]) # aberrant cell fraction
+    write.table(no.events, paste(outputdir,"/ai_intermediate2.txt"), sep="\t")
     #Here we restrict ourselves to real LOH
     sample.seg <- sample.seg[sample.seg[,8] == 0,]
     no.events[j,6] <- nrow(sample.seg[sample.seg[,'AI'] == 1,])
@@ -93,5 +95,6 @@ calc.ai_new<-function(seg, chrominfo, min.size=1e6, cont = 0,ploidyByChromosome=
     no.events[j,9] <- mean(sample.seg[sample.seg[,'AI'] == 2,4] - sample.seg[sample.seg[,'AI'] == 2,3])
     no.events[j,10] <- nrow(sample.seg[sample.seg[,'AI'] == 3,])
   }
+  write.table(no.events, paste(outputdir,"/ai_intermediate3.txt"), sep="\t")
   return(no.events)
 }
